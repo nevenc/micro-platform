@@ -10,7 +10,7 @@ on:
 permissions:
   packages: write
   contents: read
-  
+
 jobs:
   relocate-images:
     runs-on: ubuntu-24.04
@@ -31,7 +31,7 @@ jobs:
         echo "Logged into Github Packages"
 
     - name: Set up Carvel tools
-      uses: carvel-dev/setup-action@v1
+      uses: carvel-dev/setup-action@v2
       with:
         tools: kbld,imgpkg
 
@@ -40,4 +40,5 @@ jobs:
         kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
         echo "images.lock.yaml:"
         cat cluster/cert-manager/images.lock.yaml
+        echo "-----------END-images.lock.yaml-----------"
         imgpkg copy --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}/micro-platform
