@@ -42,3 +42,4 @@ jobs:
         cat cluster/cert-manager/images.lock.yaml
         echo "-----------END-images.lock.yaml-----------"
         imgpkg copy --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}/micro-platform
+        echo "-----------END-imgpkg-copy----------------"
