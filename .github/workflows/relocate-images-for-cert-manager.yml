@@ -7,6 +7,10 @@ on:
     # paths:
     #   - 'upstream/cert-manager'
 
+permissions:
+  packages: write
+  contents: read
+  
 jobs:
   relocate-images:
     runs-on: ubuntu-24.04
