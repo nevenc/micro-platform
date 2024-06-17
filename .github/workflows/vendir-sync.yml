@@ -1,18 +1,18 @@
-name: Extract, repackage and publish images for cert-manager
+name: Synchronize the upstream from vendir.
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'upstream/cert-manager/cert-manager.yaml'
+      - 'vendir.yml'
 
 permissions:
   packages: write
   contents: write
 
 jobs:
-  relocate-images:
+  sync-upstream-and-charts:
     runs-on: ubuntu-24.04
 
     steps:
@@ -31,22 +31,20 @@ jobs:
       uses: carvel-dev/setup-action@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        only: kbld, imgpkg
+        only: vendir
 
-    - name: Build and relocate images
+    - name: Sync upstream
       run: |
-        echo "Starting kbld to extract image locations"
-        kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.sha.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
-        echo "Starting imgpkg to relocate images to GHCR"
-        imgpkg copy --lock cluster/cert-manager/images.sha.lock.yaml --lock-output cluster/cert-manager/images.lock.yaml --to-repo ghcr.io/${{ github.repository }}
-        echo "Saving packages to: ${{ github.repository }}"
+        echo "Starting vendir sync"
+        vendir sync
+        echo "Done syncing."
 
     - name: Commit and push changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add cluster/cert-manager/images.lock.yaml cluster/cert-manager/cert-manager-output.yaml
-        COMMIT_MESSAGE="Updating images.lock.yaml and cert-manager-output.yaml ---
+        git add upstream
+        COMMIT_MESSAGE="Updating upstream ---
           Event: ${{ github.event_name }}
           Actor: ${{ github.actor }}
           Ref: ${{ github.ref_name}}
