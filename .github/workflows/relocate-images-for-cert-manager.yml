@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'upstream/cert-manager'
+      - 'upstream/cert-manager/cert-manager.yaml'
 
 permissions:
   packages: write
