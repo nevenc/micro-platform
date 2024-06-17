@@ -9,7 +9,7 @@ on:
 
 permissions:
   packages: write
-  contents: read
+  contents: write
 
 jobs:
   relocate-images:
@@ -35,11 +35,23 @@ jobs:
 
     - name: Build and relocate images
       run: |
+        echo "Starting kbld to extract image locations"
         kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
         echo "-------"
         echo "images.lock.yaml:"
+        cat images.lock.yaml
         echo "-------"
-        cat cluster/cert-manager/images.lock.yaml
-        echo "-------"
+        echo "Starting imgpkg to relocate images to GHCR"
         imgpkg copy --debug --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}
         echo "Saving packages to: ${{ github.repository }}"
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add cluster/cert-manager/images.lock.yaml cluster/cert-manager/ghcr.lock.yaml cluster/cert-manager/cert-manager-output.yaml
+        COMMIT_MESSAGE="Updating images.lock.yaml, ghcr.lock.yaml and cert-manager-output.yaml.\nEvent: ${{ github.event_name }} by ${{ github.actor }} on ${{ github.ref }}."
+        git commit -m "$COMMIT_MESSAGE"
+        git push origin main
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
