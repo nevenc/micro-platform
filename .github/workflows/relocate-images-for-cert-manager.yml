@@ -36,7 +36,10 @@ jobs:
     - name: Build and relocate images
       run: |
         kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
+        echo "-------"
         echo "images.lock.yaml:"
+        echo "-------"
         cat cluster/cert-manager/images.lock.yaml
-        echo "GitHub Repository: ${{ github.repository }}"
+        echo "-------"
         imgpkg copy --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}
+        echo "Saving packages to: ${{ github.repository }}"
