@@ -36,26 +36,21 @@ jobs:
     - name: Build and relocate images
       run: |
         echo "Starting kbld to extract image locations"
-        kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
-        echo "-------"
-        echo "images.lock.yaml:"
-        cat cluster/cert-manager/images.lock.yaml
-        echo "-------"
+        kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.sha.lock.yaml > cluster/cert-manager/cert-manager.yaml
         echo "Starting imgpkg to relocate images to GHCR"
-        imgpkg copy --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}
-        # imgpkg copy --debug --lock cluster/cert-manager/images.lock.yaml --lock-output cluster/cert-manager/ghcr.lock.yaml --to-repo ghcr.io/${{ github.repository }}
+        imgpkg copy --lock cluster/cert-manager/images.sha.lock.yaml --lock-output cluster/cert-manager/images.lock.yaml --to-repo ghcr.io/${{ github.repository }}
         echo "Saving packages to: ${{ github.repository }}"
 
     - name: Commit and push changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add cluster/cert-manager/images.lock.yaml cluster/cert-manager/ghcr.lock.yaml cluster/cert-manager/cert-manager-output.yaml
-        COMMIT_MESSAGE="Updating images.lock.yaml, ghcr.lock.yaml and cert-manager-output.yaml ---
-          Event: ${{ github.event }} - ${{ github.event_name }}
-          Actor: ${{ github.actor }} - ${{ github.actor_id }}
-          Ref: ${{ github.ref }} - ${{ github.ref_name}}
-          Action: ${{ github.action }} - ${{ github.action_path}}
+        git add cluster/cert-manager/images.lock.yaml cluster/cert-manager/cert-manager.yaml
+        COMMIT_MESSAGE="Updating images.lock.yaml and cert-manager.yaml ---
+          Event: ${{ github.event_name }}
+          Actor: ${{ github.actor }}
+          Ref: ${{ github.ref_name}}
+          Job: ${{ github.job }}
         "
         git commit -m "$COMMIT_MESSAGE"
         git push origin main
