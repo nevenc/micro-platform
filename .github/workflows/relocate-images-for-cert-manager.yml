@@ -35,7 +35,7 @@ jobs:
 
     - name: Build and relocate images
       run: |
-        kbld --debug -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
+        kbld -f upstream/cert-manager/cert-manager.yaml --imgpkg-lock-output cluster/cert-manager/images.lock.yaml > cluster/cert-manager/cert-manager-output.yaml
         echo "-------"
         echo "images.lock.yaml:"
         echo "-------"
