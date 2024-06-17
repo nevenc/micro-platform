@@ -1,6 +1,7 @@
 name: Extract, repackage and publish images for cert-manager
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
