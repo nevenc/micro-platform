@@ -17,6 +17,7 @@ kind: Namespace
 metadata:
   name: cert-manager
 
+
 ---
 # Source: cert-manager/templates/crds.yaml
 #
