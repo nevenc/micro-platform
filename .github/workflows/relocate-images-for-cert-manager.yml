@@ -30,7 +30,9 @@ jobs:
     - name: Set up Carvel tools
       uses: carvel-dev/setup-action@v2
       with:
-        tools: kbld,imgpkg
+        token: ${{ secrets.GITHUB_TOKEN }}
+        kbld: latest
+        imgpkg: latest
 
     - name: Build and relocate images
       run: |
